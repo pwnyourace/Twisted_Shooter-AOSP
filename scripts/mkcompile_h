@@ -54,6 +54,18 @@ UTS_VERSION="$UTS_VERSION $CONFIG_FLAGS $TIMESTAMP"
 UTS_LEN=64
 UTS_TRUNCATE="cut -b -$UTS_LEN"
 
+if [ -z "$KBUILD_BUILD_COMPILEBY" ]; then
+	COMPILEBY=`whoami`
+else
+	COMPILEBY=$KBUILD_BUILD_COMPILEBY
+fi
+
+if [ -z "$KBUILD_BUILD_COMPILEHOST" ]; then
+	COMPILEHOST=`hostname | $UTS_TRUNCATE`
+else
+	COMPILEHOST=$KBUILD_BUILD_COMPILEHOST
+fi
+
 # Generate a temporary compile.h
 
 ( echo /\* This file is auto generated, version $VERSION \*/
@@ -64,11 +76,14 @@ UTS_TRUNCATE="cut -b -$UTS_LEN"
   echo \#define UTS_VERSION \"`echo $UTS_VERSION | $UTS_TRUNCATE`\"
 
   echo \#define LINUX_COMPILE_TIME \"`date +%T`\"
-  echo \#define LINUX_COMPILE_BY \"`whoami`\"
-  echo \#define LINUX_COMPILE_HOST \"`hostname | $UTS_TRUNCATE`\"
+  echo \#define LINUX_COMPILE_BY \"$COMPILEBY\"
+  echo \#define LINUX_COMPILE_HOST \"$COMPILEHOST\"
 
-  domain=`dnsdomainname 2> /dev/null`
-  if [ -z "$domain" ]; then
+  if [ -z "$KBUILD_BUILD_COMPILEDOMAIN" ]; then
+    domain=$KBUILD_BUILD_COMPILEDOMAIN
+  elif [ -x /bin/dnsdomainname ]; then
+    domain=`dnsdomainname 2> /dev/null`
+  elif [ -x /bin/domainname ]; then
     domain=`domainname 2> /dev/null`
   fi
 
