@@ -451,3 +451,4 @@ union reg_cp_rb_cntl {
 #define REG_COHER_SIZE_PM4		 0xA29
 
 #endif /* _YAMATO_REG_H */
+

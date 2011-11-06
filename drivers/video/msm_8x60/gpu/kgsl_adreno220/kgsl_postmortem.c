@@ -893,3 +893,4 @@ int kgsl_postmortem_dump(struct kgsl_device *device)
 
 	return 0;
 }
+

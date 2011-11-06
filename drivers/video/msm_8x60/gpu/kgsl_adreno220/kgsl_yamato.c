@@ -783,7 +783,6 @@ static int kgsl_yamato_start(struct kgsl_device *device, unsigned int init_ram)
 	int status = -EINVAL;
 	struct kgsl_yamato_device *yamato_device = KGSL_YAMATO_DEVICE(device);
 	int init_reftimestamp = 0x7fffffff;
-	unsigned int override1, override2, i;
 
 	KGSL_DRV_VDBG("enter (device=%p)\n", device);
 
@@ -821,9 +820,9 @@ static int kgsl_yamato_start(struct kgsl_device *device, unsigned int init_ram)
 		kgsl_yamato_regwrite(device, REG_RBBM_SOFT_RESET, 0x00000001);
 
 	/* The core is in an indeterminate state until the reset completes
-	 * after 30ms.
+	 * after 50ms.
 	 */
-	msleep(30);
+	hr_msleep(50);
 
 	kgsl_yamato_regwrite(device, REG_RBBM_SOFT_RESET, 0x00000000);
 
@@ -853,21 +852,8 @@ static int kgsl_yamato_start(struct kgsl_device *device, unsigned int init_ram)
 	kgsl_yamato_regwrite(device, REG_RBBM_PM_OVERRIDE1, 0);
 	if (device->chip_id != KGSL_CHIPID_LEIA_REV470)
 		kgsl_yamato_regwrite(device, REG_RBBM_PM_OVERRIDE2, 0);
-	else {
-		i = 3; /*try writing override1 & 2, three times.*/
-		while(i){
-			kgsl_yamato_regwrite(device, REG_RBBM_PM_OVERRIDE1, 0x7BFFFFFA);
-			kgsl_yamato_regread(device, REG_RBBM_PM_OVERRIDE1, &override1);
-			kgsl_yamato_regwrite(device, REG_RBBM_PM_OVERRIDE2, 0x000001F4);
-			kgsl_yamato_regread(device, REG_RBBM_PM_OVERRIDE2, &override2);
-			if (((override1 & 0x7BFFFFFA) == 0x7BFFFFFA) &&
-				((override2 & 0x000001F4) == 0x000001F4))
-				break;
-			KGSL_DRV_ERR("OVERRIDE1 = 0x%x, OVERRIDE2 = 0x%x !!\n",
-								override1, override2);
-			i--;
-		}
-        }
+	else
+		kgsl_yamato_regwrite(device, REG_RBBM_PM_OVERRIDE2, 0x80);
 
 	kgsl_sharedmem_set(&device->memstore, 0, 0,
 			   device->memstore.size);
@@ -876,7 +862,7 @@ static int kgsl_yamato_start(struct kgsl_device *device, unsigned int init_ram)
 			      KGSL_DEVICE_MEMSTORE_OFFSET(ref_wait_ts),
 			      init_reftimestamp);
 
-	kgsl_yamato_regwrite(device, REG_RBBM_DEBUG, 0x000C0000);
+	kgsl_yamato_regwrite(device, REG_RBBM_DEBUG, 0x00080000);
 
 
 	KGSL_DRV_DBG("enabling RBBM interrupts  mask 0x%08lx\n",
@@ -1437,3 +1423,4 @@ int kgsl_yamato_getfunctable(struct kgsl_functable *ftbl)
 
 	return KGSL_SUCCESS;
 }
+

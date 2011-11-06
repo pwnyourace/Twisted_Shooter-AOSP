@@ -238,3 +238,4 @@ kgsl_find_context(struct kgsl_device_private *dev_priv, uint32_t id)
 }
 
 #endif  /* _KGSL_DEVICE_H */
+

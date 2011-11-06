@@ -526,3 +526,4 @@ int kgsl_debug_init(void)
 #endif /* CONFIG_DEBUG_FS */
 	return 0;
 }
+

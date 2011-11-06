@@ -95,3 +95,4 @@ int kgsl_pwrctrl_init_sysfs(struct kgsl_device *device);
 void kgsl_pwrctrl_uninit_sysfs(struct kgsl_device *device);
 
 #endif /* _GSL_PWRCTRL_H */
+

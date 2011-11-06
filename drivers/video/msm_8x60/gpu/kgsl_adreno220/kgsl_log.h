@@ -125,3 +125,4 @@ int kgsl_debug_init(void);
 #define KGSL_PWR_FATAL(fmt, args...) KGSL_LOG_FATAL(kgsl_pwr_log, fmt, ##args)
 
 #endif /* _GSL_LOG_H */
+

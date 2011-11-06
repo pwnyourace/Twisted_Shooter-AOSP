@@ -2162,3 +2162,4 @@ struct resource resources_batt_alarm = {
 	.flags = IORESOURCE_IRQ,
 };
 #endif
+
